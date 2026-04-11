@@ -3,7 +3,8 @@
 [![Build and Publish Docker Image](https://github.com/Letark/traefik-route53-companion/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/Letark/traefik-route53-companion/actions/workflows/docker-publish.yml)
 [![GitHub release](https://img.shields.io/github/v/release/Letark/traefik-route53-companion)](https://github.com/Letark/traefik-route53-companion/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Docker Pulls](https://img.shields.io/badge/container-ghcr.io-blue)](https://github.com/Letark/traefik-route53-companion/pkgs/container/traefik-route53-companion)
+[![Docker Pulls](https://img.shields.io/docker/pulls/letark/traefik-route53-companion)](https://hub.docker.com/r/letark/traefik-route53-companion)
+[![Docker Image](https://img.shields.io/badge/ghcr.io-letark-blue)](https://github.com/Letark/traefik-route53-companion/pkgs/container/traefik-route53-companion)
 
 Automatically create and remove **Amazon Route 53** DNS records for containers served by [Traefik](https://traefik.io), by watching Docker events and reading Traefik router labels.
 
@@ -137,11 +138,14 @@ docker build -t traefik-route53-companion .
 
 ## Releases
 
-Docker images are published to the [GitHub Container Registry](https://github.com/Letark/traefik-route53-companion/pkgs/container/traefik-route53-companion) on every tagged release, built for `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.
+Docker images are published to both [Docker Hub](https://hub.docker.com/r/letark/traefik-route53-companion) and the [GitHub Container Registry](https://github.com/Letark/traefik-route53-companion/pkgs/container/traefik-route53-companion) on every tagged release, built for `linux/amd64`, `linux/arm64`, and `linux/arm/v7`.
 
 ```
-ghcr.io/letark/traefik-route53-companion:latest
-ghcr.io/letark/traefik-route53-companion:v1.0.0
+# Docker Hub
+docker pull letark/traefik-route53-companion:latest
+
+# GitHub Container Registry
+docker pull ghcr.io/letark/traefik-route53-companion:latest
 ```
 
 ---
