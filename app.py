@@ -71,10 +71,32 @@ def get_route53_client():
     return boto3.client("route53", **kwargs)
 
 
+def get_existing_record(client, hostname):
+    """Return (type, value) of the first existing record for hostname, or (None, None)."""
+    try:
+        resp = client.list_resource_record_sets(
+            HostedZoneId=HOSTED_ZONE_ID,
+            StartRecordName=hostname,
+            StartRecordType="A",
+            MaxItems="5",
+        )
+        for rr in resp.get("ResourceRecordSets", []):
+            if rr["Name"].rstrip(".") == hostname.rstrip("."):
+                value = rr["ResourceRecords"][0]["Value"] if rr.get("ResourceRecords") else None
+                return rr["Type"], value
+    except ClientError as e:
+        log.warning("Could not check existing record for %s: %s", hostname, e)
+    return None, None
+
+
 def upsert_record(client, hostname):
     """Create or update a DNS record pointing hostname → TARGET_DOMAIN."""
     if DRY_RUN:
         log.info("[DRY RUN] Would upsert %s %s → %s", TARGET_RECORD_TYPE, hostname, TARGET_DOMAIN)
+        return
+    existing_type, _ = get_existing_record(client, hostname)
+    if existing_type and existing_type != TARGET_RECORD_TYPE:
+        log.info("Skipping %s — existing %s record would conflict", hostname, existing_type)
         return
     try:
         client.change_resource_record_sets(
@@ -98,9 +120,16 @@ def upsert_record(client, hostname):
 
 
 def delete_record(client, hostname):
-    """Delete a DNS record for hostname if it exists and points to TARGET_DOMAIN."""
+    """Delete a DNS record for hostname only if it points to TARGET_DOMAIN."""
     if DRY_RUN:
         log.info("[DRY RUN] Would delete %s %s", TARGET_RECORD_TYPE, hostname)
+        return
+    existing_type, existing_value = get_existing_record(client, hostname)
+    if not existing_type:
+        log.debug("Record %s not found in Route53, skipping delete", hostname)
+        return
+    if existing_type != TARGET_RECORD_TYPE or existing_value != TARGET_DOMAIN:
+        log.info("Skipping delete of %s — record not managed by us (%s %s)", hostname, existing_type, existing_value)
         return
     try:
         client.change_resource_record_sets(
