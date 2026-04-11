@@ -1,0 +1,42 @@
+services:
+  traefik-route53-companion:
+    image: ghcr.io/letark/traefik-route53-companion:latest
+    container_name: traefik-route53-companion
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      # Route53 hosted zone ID (required)
+      - HOSTED_ZONE_ID=ZXXXXXXXXXXXXXXXXXXXX
+
+      # The DNS value all records will point to — your server's IP or a CNAME target (required)
+      - TARGET_DOMAIN=home.example.com
+
+      # Record type: CNAME (default) or A
+      - TARGET_RECORD_TYPE=CNAME
+
+      # Comma-separated list of domains to manage records for (required)
+      - DOMAINS=example.com
+
+      # TTL in seconds for created records (default: 300)
+      - RECORD_TTL=300
+
+      # Set to "true" to log actions without making any Route53 changes
+      - DRY_RUN=false
+
+      # Log level: DEBUG, INFO (default), WARNING, ERROR
+      - LOG_LEVEL=INFO
+
+      # AWS credentials — omit if using IAM roles (EC2 instance profile, ECS task role, etc.)
+      - AWS_ACCESS_KEY_ID=
+      - AWS_SECRET_ACCESS_KEY=
+      - AWS_REGION=us-east-1
+
+  # Example application — companion will auto-create DNS for this container
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.example.com`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls=true"
