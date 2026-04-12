@@ -167,3 +167,9 @@ MIT — see [LICENSE](LICENSE).
 - [tiredofit/docker-traefik-cloudflare-companion](https://github.com/tiredofit/docker-traefik-cloudflare-companion) — the original inspiration for this project
 - [Traefik](https://traefik.io) — the reverse proxy that makes this possible
 - [Kiro](https://kiro.dev) — the AI assistant that designed and built this project
+
+---
+
+<p align="center">
+  <img src="assets/logo.png" width="200" alt="Letark logo" />
+</p>
