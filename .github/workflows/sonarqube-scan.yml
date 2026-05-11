@@ -16,7 +16,7 @@ jobs:
 
       - name: SonarQube Scan
         env:
-          HOST_WORKSPACE: /home/engineer/Docker/containers/github-runner/realestate-flyer/work/traefik-route53-companion/traefik-route53-companion
+          HOST_WORKSPACE: /home/engineer/Docker/containers/github-runner/traefik-route53-companion/work/traefik-route53-companion/traefik-route53-companion
         run: |
           docker run --rm \
             --network proxy_network \
